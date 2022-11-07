@@ -15,12 +15,17 @@
           ></button>
           <ul class="dropdown-menu">
             <li>
+              <a href="/edit-post/{{post.id}}" class="dropdown-item">Edit</a>
               <a href="/delete-post/{{post.id}}" class="dropdown-item">Delete</a>
             </li>
           </ul>
         </div>
         {% endif %}
       </div>
+      <div class="card-body">
+        <div class="card-text">{{post.title}}</div>
+      </div>
+      <hr>
       <div class="card-body">
         <div class="card-text">{{post.text}}</div>
       </div>

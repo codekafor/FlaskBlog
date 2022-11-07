@@ -17,12 +17,15 @@ def home():
 @login_required
 def new_post():
     if request.method == "POST":
+        title = request.form.get('title')
         text = request.form.get('text')
 
-        if not text:
-            flash('Post cannot be empty', category='error')
+        if not title:
+            flash('Both fields are compulsory', category='error')
+        elif not text:
+            flash('Both fields are compulsory', category='error')
         else:
-            post = Post(text=text, author=current_user.id)
+            post = Post(text=text, title=title, author=current_user.id)
             db.session.add(post)
             db.session.commit()
             flash('Post created!', category='success')
@@ -31,22 +34,34 @@ def new_post():
     return render_template('new_post.html', user=current_user)
 
 
+@views.route("/edit-post/<id>", methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    post = Post.query.filter_by(id=id).first()
+    
+    if request.method == 'POST':
+        title = request.form['title']
+        text = request.form['text']
+        
+        post = Post(text=text, title=title, author=current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash('Post updated.', category='success')
+        return redirect(url_for('views.home'))
+
+    return render_template('edit_post.html', user=current_user, post=post)
+    
+
 @views.route("/delete-post/<id>")
 @login_required
 def delete_post(id):
     post = Post.query.filter_by(id=id).first()
-
-    if not post:
-        flash("Post does not exist.", category='error')
-    elif current_user.id != post.id:
-        flash('You do not have permission to delete this post.', category='error')
-    else:
-        db.session.delete(post)
-        db.session.commit()
-        flash('Post deleted.', category='success')
+    db.session.delete(post)
+    db.session.commit()
+    flash('Post deleted.', category='success')
 
     return redirect(url_for('views.home'))
-
+        
 
 @views.route("/posts/<username>")
 @login_required
@@ -59,8 +74,3 @@ def posts(username):
 
     posts = Post.query.filter_by(author=user.id).all()
     return render_template("posts.html", user=current_user, posts=posts, username=username)
-
-
-@views.route("/about")
-def about():
-    return render_template("about.html")

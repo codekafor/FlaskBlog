@@ -15,14 +15,14 @@ div {
 }
 </style>
 
-<h1>Make a Post</h1>
+<h1>Editing Post</h1>
 
 <form method="POST">
     <h3>Title</h3>
-    <textarea name="title" id="title" class="form-control"></textarea>
+    <textarea name="title" id="title" class="form-control">{{post.title}}</textarea>
     <br>
     <h3>Content</h3>
-    <textarea name="text" id="text" class="form-control"></textarea>
+    <textarea name="text" id="text" class="form-control">{{post.text}}</textarea>
     <br>
     <div>
         <button type="submit" class="btn btn-lg btn-primary">Post</button>
