@@ -74,3 +74,13 @@ def posts(username):
 
     posts = Post.query.filter_by(author=user.id).all()
     return render_template("posts.html", user=current_user, posts=posts, username=username)
+
+
+@views.route('/contact')
+def contact():
+    return render_template('contact.html', user=current_user)
+
+
+@views.route('/about')
+def aboutt():
+    return render_template('about.html', user=current_user)
