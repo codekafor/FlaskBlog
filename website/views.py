@@ -43,11 +43,11 @@ def edit_post(id):
         title = request.form['title']
         text = request.form['text']
         
-        post = Post(text=text, title=title, author=current_user.id)
-        db.session.add(post)
+        post.title = title
+        post.text = text
         db.session.commit()
         flash('Post updated.', category='success')
-        return redirect(url_for('views.home'))
+        return redirect(url_for('views.home', id=id))
 
     return render_template('edit_post.html', user=current_user, post=post)
     
