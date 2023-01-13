@@ -7,30 +7,30 @@ from werkzeug.security import generate_password_hash, check_password_hash
 auth = Blueprint("auth", __name__)
 
 
-@auth.route("/login", methods=['GET', 'POST'])
+@auth.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
+    if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
 
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
-                flash("Logged in!", category='success')
+                flash("Logged in!", category="success")
                 login_user(user, remember=True)
-                return redirect(url_for('views.home'))
+                return redirect(url_for("views.home"))
             else:
-                flash('Password is incorrect.', category='error')
+                flash("Password is incorrect.", category="error")
         else:
-            flash('Email does not exist.', category='error')
+            flash("Email does not exist.", category="error")
     return render_template("login.html", user=current_user)
 
 
-@auth.route("/sign-up", methods=['GET', 'POST'])
+@auth.route("/sign-up", methods=["GET", "POST"])
 def sign_up():
-    if request.method == 'POST':
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
+    if request.method == "POST":
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
         email = request.form.get("email")
         username = request.form.get("username")
         password1 = request.form.get("password1")
@@ -40,25 +40,30 @@ def sign_up():
         username_exists = User.query.filter_by(username=username).first()
 
         if email_exists:
-            flash('Email is already in use.', category='error')
+            flash("Email is already in use.", category="error")
         elif len(email) < 4:
-            flash("Email is invalid.", category='error')
+            flash("Email is invalid.", category="error")
         elif username_exists:
-            flash('Username is already in use.', category='error')
+            flash("Username is already in use.", category="error")
         elif password1 != password2:
-            flash('Passwords do not match!', category='error')
+            flash("Passwords do not match!", category="error")
         elif len(username) < 2:
-            flash('Username is too short.', category='error')
+            flash("Username is too short.", category="error")
         elif len(password1) < 5:
-            flash('Password is too short.', category='error')
+            flash("Password is too short.", category="error")
         else:
-            new_user = User(first_name=first_name, last_name=last_name, email=email, username=username, password=generate_password_hash(
-                password1, method='sha256'))
+            new_user = User(
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                username=username,
+                password=generate_password_hash(password1, method="sha256"),
+            )
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
-            flash('User created!')
-            return redirect(url_for('views.home'))
+            flash("User created!")
+            return redirect(url_for("views.home"))
 
     return render_template("sign_up.html", user=current_user)
 
